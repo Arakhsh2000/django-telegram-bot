@@ -18,7 +18,6 @@ SECRET_KEY = os.getenv(
 )
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() in ["true", "1"]
-
 ALLOWED_HOSTS = ["*"]  # Allow all for now (especially for Railway)
 
 # === Installed Apps ===
@@ -78,9 +77,11 @@ TEMPLATES = [
 ]
 
 # === Database ===
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///db.sqlite3")
+raw_db_url = os.getenv("DATABASE_URL", "sqlite:///db.sqlite3")
+if raw_db_url.startswith("postgresql://"):
+    raw_db_url = raw_db_url.replace("postgresql://", "postgres://")
 DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    'default': dj_database_url.parse(raw_db_url, conn_max_age=600)
 }
 
 # === Password Validation ===
@@ -114,7 +115,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 
-# === Telegram Token ===
+# === Telegram Bot ===
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 if TELEGRAM_TOKEN is None:
     logging.error(
