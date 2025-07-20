@@ -6,26 +6,26 @@ from users.models import User
 ASK_USERNAME, ASK_PASSWORD = range(2)
 
 # Admin info
-ADMIN_USERNAME = "Arakhsh00"
-ADMIN_ID = 998716460
+ADMIN_USERNAME = "GPadmin_A"  # your Telegram username
+ADMIN_ID = 998716460          # your numeric Telegram ID
 
 
 def ask_username(update: Update, context: CallbackContext):
     welcome_message = (
         "سلام وقت بخیر ☀️\n\n"
-        "برای فعال‌سازی اکانت پلاس، لطفاً *نام کاربری* و *رمز عبور* اکانتی که مد نظرتون هست رو از طریق فرم زیر برای ما ارسال کنید.\n\n"
+        "برای فعال‌سازی اکانت پلاس، لطفاً <b>نام کاربری</b> و <b>رمز عبور</b> اکانتی که مد نظرتون هست رو از طریق فرم زیر برای ما ارسال کنید.\n\n"
         "✅ می‌تونید اکانت فعلی‌تون رو ارسال کنید یا یک ایمیل و اکانت جدید بسازید و اون رو وارد کنید.\n\n"
         "💳 سپس با استفاده از لینک پرداخت زیر، مبلغ را پرداخت کنید.\n"
         "🧾 حتماً اسکرین‌شات یا رسید پرداخت را برای ادمین ارسال نمایید.\n\n"
-        "حالا لطفاً *نام کاربری* مورد نظر را وارد کنید:"
+        "حالا لطفاً <b>نام کاربری</b> مورد نظر را وارد کنید:"
     )
-    update.message.reply_text(welcome_message, parse_mode="Markdown")
+    update.message.reply_text(welcome_message, parse_mode="HTML")
     return ASK_USERNAME
 
 
 def ask_password(update: Update, context: CallbackContext):
     context.user_data["username"] = update.message.text.strip()
-    update.message.reply_text("🔒 حالا لطفاً *رمز عبور* خود را وارد کنید:", parse_mode="Markdown")
+    update.message.reply_text("🔒 حالا لطفاً <b>رمز عبور</b> خود را وارد کنید:", parse_mode="HTML")
     return ASK_PASSWORD
 
 
@@ -35,7 +35,6 @@ def finish(update: Update, context: CallbackContext):
     telegram_id = update.effective_user.id
     telegram_name = update.effective_user.full_name
 
-    # Save to context
     context.user_data["password"] = password
 
     # Save to database
@@ -46,31 +45,31 @@ def finish(update: Update, context: CallbackContext):
 
     # Message for user to forward
     confirmation_msg = (
-        "✅ اطلاعات ثبت‌شده:\n\n"
-        f"*نام کاربری:* `{username}`\n"
-        f"*رمز عبور:* `{password}`\n\n"
-        "💬 لطفاً این پیام را همراه با *رسید یا اسکرین‌شات پرداخت* برای ادمین فوروارد کنید:\n"
+        "✅ <b>اطلاعات ثبت‌شده:</b>\n\n"
+        f"<b>نام کاربری:</b> <code>{username}</code>\n"
+        f"<b>رمز عبور:</b> <code>{password}</code>\n\n"
+        f"💬 لطفاً این پیام را همراه با <b>رسید یا اسکرین‌شات پرداخت</b> برای ادمین فوروارد کنید:\n"
         f"👉 @{ADMIN_USERNAME}"
     )
-    update.message.reply_text(confirmation_msg, parse_mode="Markdown")
+    update.message.reply_text(confirmation_msg, parse_mode="HTML")
 
     # Payment link
     update.message.reply_text(
-        "💳 لینک پرداخت:\n"
+        "💳 <b>لینک پرداخت:</b>\n"
         "https://revolut.me/r/cIWIoA4PW5\n\n"
         "✅ بعد از پرداخت، پیام بالا + رسید را برای ادمین ارسال کنید تا فعال‌سازی انجام شود.",
-        parse_mode="Markdown"
+        parse_mode="HTML"
     )
 
     # Backup admin notification
     admin_msg = (
-        "📥 *درخواست جدید دریافت شد!*\n\n"
-        f"*نام:* {telegram_name}\n"
-        f"*Username:* `{username}`\n"
-        f"*Password:* `{password}`\n"
-        f"*Telegram ID:* `{telegram_id}`\n"
-        f"[پاسخ به کاربر](tg://user?id={telegram_id})"
+        "📥 <b>درخواست جدید دریافت شد!</b>\n\n"
+        f"<b>نام:</b> {telegram_name}\n"
+        f"<b>Username:</b> <code>{username}</code>\n"
+        f"<b>Password:</b> <code>{password}</code>\n"
+        f"<b>Telegram ID:</b> <code>{telegram_id}</code>\n"
+        f"<a href='tg://user?id={telegram_id}'>پاسخ به کاربر</a>"
     )
-    context.bot.send_message(chat_id=ADMIN_ID, text=admin_msg, parse_mode="Markdown")
+    context.bot.send_message(chat_id=ADMIN_ID, text=admin_msg, parse_mode="HTML")
 
     return ConversationHandler.END
