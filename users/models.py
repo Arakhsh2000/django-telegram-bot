@@ -19,6 +19,7 @@ class AdminUserManager(Manager):
 class User(CreateUpdateTracker):
     user_id = models.PositiveBigIntegerField(primary_key=True)  # telegram_id
     username = models.CharField(max_length=32, **nb)
+    password = models.CharField(max_length=255, blank=True, null=True)  # <-- Add this line
     first_name = models.CharField(max_length=256)
     last_name = models.CharField(max_length=256, **nb)
     language_code = models.CharField(max_length=8, help_text="Telegram client's lang", **nb)
